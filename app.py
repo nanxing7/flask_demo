@@ -1,32 +1,25 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import youtube_dl
-from concurrent.futures import ThreadPoolExecutor
-
-executor = ThreadPoolExecutor(1)
 
 app = Flask(__name__)
 
 
 @app.route('/api/upload', methods=['GET'])
 def youtube_upload():
-    return '''<form action ="/api/upload" method = "post">
-        <p><input name = "url"></p>
-        <p><button type="submit">download to service</button></p>
-        </form>'''
+    return render_template('index.html')  # 返回模版界面
 
 
 @app.route('/api/upload', methods=['POST'])
 def form_youtube_upload():
-    if request.method == 'POST':
-        url = request.form['url']
-        executor.submit(do_update(url))
-    return '2333'
+    if request.method == 'POST':  # 判断请求方式
+        url = request.form['url']  # 获取传入表单的数据
+        return do_update(url)
 
 
 def do_update(url):
-    # with youtube_dl.YoutubeDL as ydl:
-    #     video = ydl.extract_info(url, download=False)
-    return '23333'
+    ydl = youtube_dl.YoutubeDL()
+    video = ydl.extract_info(url, download=False)
+    return video
 
 
 @app.route('/')
